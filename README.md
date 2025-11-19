@@ -167,7 +167,7 @@ termcolor
 
 ---
 
-## 9. Ready for Submission
+## 9. Summary
 
 This repository includes:
 - ✅ MCP server
