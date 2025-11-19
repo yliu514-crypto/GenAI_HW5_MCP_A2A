@@ -1,185 +1,180 @@
 # GenAI_HW5_MCP_A2A
 # Multi-Agent Customer Service System (Option A — Simple & Fully Compliant)
 
-# Multi-Agent Customer Service System (Option A – A2A + MCP)
+This repository contains a fully implemented Multi-Agent Customer Service System built using Agent-to-Agent (A2A) coordination and a custom Model Context Protocol (MCP) server. The project satisfies all assignment requirements:
 
-This repository contains a fully implemented **multi-agent customer service system** built using **Agent-to-Agent (A2A) communication** and a custom **Model Context Protocol (MCP) server**.
+• RouterAgent (Orchestrator)
+• CustomerDataAgent (MCP Specialist)
+• SupportAgent (Customer Support Specialist)
+• MCP server with 5 required tools
+• Three required A2A coordination scenarios
+• End-to-end demonstration script with logs
+• Proper Python project structure for submission
 
-The project fulfills all requirements of the assignment:
-
-- Three cooperating agents:
-  - **RouterAgent** (orchestrator)
-  - **CustomerDataAgent** (MCP specialist)
-  - **SupportAgent** (support specialist)
-- MCP server with the required 5 tools
-- Full A2A message passing with detailed logs
-- End-to-end demonstration script showing task allocation, negotiation, and multi-step coordination
-- GitHub-ready code structure with virtual environment instructions and requirements.txt
-
----
-
-## 📂 Project Structure
+Project Structure
 
 .
-├── database_setup.py # Initializes SQLite database (provided by professor)
-├── mcp_server.py # MCP server exposing customer/ticket tools
-├── agents.py # RouterAgent, CustomerDataAgent, SupportAgent
-├── run_demo.py # End-to-end A2A demonstration script
-├── requirements.txt # Python dependencies
+├── database_setup.py
+├── mcp_server.py
+├── agents.py
+├── run_demo.py
+├── requirements.txt
 └── README.md
 
-yaml
-Copy code
+1. Installation
 
----
+Create a virtual environment:
 
-## 🔧 Installation & Setup
-
-### 1. Create Python Virtual Environment
-
-```bash
 python -m venv .venv
-source .venv/bin/activate     # Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
-2. Initialize the SQLite Database
-A helper script (database_setup.py) creates support.db with preloaded customer and ticket data.
 
-Run:
+2. Initialize the Database
 
-bash
-Copy code
+Run this once:
+
 python database_setup.py
-After running, your repository will contain:
 
-Copy code
-support.db
-Tables created:
+This generates support.db with two tables:
 
-Customers
-Field	Type
-id (PK)	INTEGER
-name	TEXT
-email	TEXT
-phone	TEXT
-status	active/disabled
-created_at	TIMESTAMP
-updated_at	TIMESTAMP
+customers
 
-Tickets
-Field	Type
-id (PK)	INTEGER
-customer_id	INTEGER FK
-issue	TEXT
-status	open / in_progress / resolved
-priority	low / medium / high
-created_at	DATETIME
+id
 
-🚀 Running the MCP Server
-Start the MCP server locally:
+name
 
-bash
-Copy code
+email
+
+phone
+
+status
+
+created_at
+
+updated_at
+
+tickets
+
+id
+
+customer_id
+
+issue
+
+status
+
+priority
+
+created_at
+
+3. Run the MCP Server
+
 python mcp_server.py
-You should see output similar to:
 
-arduino
-Copy code
-MCP Server running at http://127.0.0.1:5000
-Check server health:
+Server runs at:
 
-arduino
-Copy code
+http://127.0.0.1:5000
+
+Health check:
+
 http://127.0.0.1:5000/health
-🤖 MCP Tools Exposed by the Server
-The server implements 5 required tools:
 
-✔ get_customer(customer_id)
-Retrieve a customer's full details.
+4. MCP Tools Provided
 
-✔ list_customers(status, limit)
-List customers with optional status filter.
+The server exposes all required tools:
 
-✔ update_customer(customer_id, data)
-Update name/email/phone/status.
+get_customer(customer_id)
 
-✔ create_ticket(customer_id, issue, priority)
-Create a support ticket.
+list_customers(status, limit)
 
-✔ get_customer_history(customer_id)
-Return all tickets for that customer.
+update_customer(customer_id, data)
 
-All tools return structured JSON according to the MCP spec.
+create_ticket(customer_id, issue, priority)
 
-🧠 Multi-Agent Architecture
+get_customer_history(customer_id)
+
+All tools follow the MCP JSON-RPC format and return structured JSON.
+
+5. Multi-Agent Architecture
 RouterAgent (Orchestrator)
-Responsible for:
 
-Understanding user intent
+Interprets natural language queries
 
-Delegating tasks to specialists
+Detects intent
 
-Managing multi-step workflows
+Delegates tasks to specialist agents
 
-Collecting logs for transparency
+Handles multi-step reasoning
 
-Producing the final natural-language response
+Logs agent-to-agent communication
 
-CustomerDataAgent (Specialist for MCP Data Access)
-Wraps all MCP calls:
+CustomerDataAgent (MCP Specialist)
 
-Query customers
+Executes all MCP tool calls
 
-Fetch ticket histories
+Retrieves and updates customer data
 
-Create/modify records
+Retrieves ticket histories
 
-Handles no reasoning—only structured data I/O.
+Creates new tickets
 
-SupportAgent (Specialist for Customer Support)
-Handles:
+No reasoning: pure structured I/O
 
-Account help
+SupportAgent (Support Specialist)
 
-Billing + cancellation negotiation
+Provides customer support logic
 
-Refund escalation (double charge → high-priority ticket)
+Handles upgrades, account issues, billing, cancellation
 
-Multi-step workflows
+Performs escalations (double charge → high-priority ticket)
 
-Multi-intent (email update + ticket history)
+Generates ticket status reports
 
-Generates final explanations for the user
+Handles multi-intent queries
 
-▶️ Running the End-to-End Demo
-Use:
+6. Run the End-to-End Demo
 
-bash
-Copy code
 python run_demo.py
-This script runs six test scenarios, all printed with:
 
-User query
+This script demonstrates all scenarios:
 
-RouterAgent interpretation
+Simple Query
 
-Agent-to-agent communication logs
+Task Allocation
 
-Final combined response
+Negotiation (billing + cancellation)
 
-Included Scenarios
-Scenario	Description
-Simple Query	Get customer info
-Task Allocation	“Help with my account, ID X”
-Negotiation	Cancellation + billing issues
-Multi-step	Active customers with open tickets
-Escalation	Urgent refund for double charge
-Multi-intent	Update email + ticket history
+Multi-step reasoning (open tickets for active customers)
 
-These cover all assignment requirements.
+Escalation (double charge refund)
 
-📝 Conclusion (Reflection)
-During this project, I learned how to design clean multi-agent architectures that separate reasoning from data access. Building the MCP server helped me understand how tools can act as a stable API layer for agents. Implementing A2A coordination required careful thought about task allocation, negotiation, and multi-step reasoning.
+Multi-intent (update email + ticket history)
 
-The most challenging aspects included ensuring that information passed correctly between agents, handling multi-intent queries, and maintaining clear logs for transparency. This assignment strengthened my understanding of agent communication patterns and the importance of explicit state and message flow in real-world AI systems.
+Output includes:
 
+• User query
+• Detailed agent-to-agent logs
+• Final constructed answer
+
+7. Conclusion (Reflection)
+
+This project helped me understand how to design a clean multi-agent architecture where each agent has a specific role and communication between agents is explicit and traceable. Building the MCP server strengthened my understanding of separating data access from reasoning logic. Implementing multi-step workflows such as escalation and ticket-report generation required careful coordination and transparent logging, which was a core part of this assignment. Overall, this project improved my understanding of agent orchestration, tool integration, and system-level transparency in real-world AI applications.
+
+8. Requirements
+
+flask
+flask-cors
+requests
+termcolor
+
+9. Ready for Submission
+
+This repository includes:
+
+• MCP server
+• Multi-agent system (Router, Data, Support)
+• A2A coordination
+• End-to-end demonstration
+• README
+• requirements.txt
